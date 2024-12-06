@@ -1,7 +1,11 @@
+import os
+import sys
+from numpy.distutils.core import Extension, setup
+from distutils import sysconfig
+
 _version = '0.2.4'
 
-# check for the required and optional dependencies
-
+# Ensure dependencies are installed
 try:
     import numpy
 except:
@@ -35,64 +39,25 @@ try:
 except:
     print('warning: preprocessing dependency "Pillow" is not installed')
 
-import os, sys, setuptools
-from numpy.distutils.core import Extension, setup
-from distutils import sysconfig
+# Set up the correct path
+source_dir = os.path.join(os.getcwd(), 'src', 'pyhspf')  # This is the directory where your source code is located
 
-_directory = '{}/pyhspf'.format(sysconfig.get_python_lib())
-
-_d = """
-PyHSPF contains a library of subroutines to run the Hydrological
-Simulation Program in Fortran (HSPF), Python extensions to the HSPF
-library, and a series of classes for building HSPF input files,
-performing simulations, and postprocessing simulation results.
-"""
-
-_s = """Python Extensions for utilizing the Hydrological Simulation Program in Fortran (HSPF)"""
-
-_l = """
-PyHSPF, Version {}
-
-Copyright (c) 2014, UChicago Argonne, LLC
-All rights reserved.
-Copyright 2014. UChicago Argonne, LLC. This software was produced under U.S.
-Government contract DE-AC02-06CH11357 for Argonne National Laboratory (ANL),
-which is operated by UChicago Argonne, LLC for the U.S. Department of Energy.
-""".format(_version)
-
-# link flags
-if os.name == 'nt': 
-    lflags = ['-static']
-else:               
-    lflags = []
-
-# any additional files that are needed (blank for now)
-data_files = []
-data_directory = sysconfig.get_python_lib()
-
-# package data
-package_data = ['hspfmsg.wdm', 'attributes']
-
-# find all the Fortran and C files
-source_dir = 'src/pyhspf'  # Make sure the source directory is correct
-
+# Ensure the correct directory and files are used
 files = [os.path.join(source_dir, 'hspf13', f) for f in os.listdir(os.path.join(source_dir, 'hspf13'))
-         if f.endswith('.c') or f.endswith('.f')]
+         if f.endswith('.c') or f.endswith('.f')]  # Look for .c and .f files
 
-# Fortran compilation flags
 fflags = ['-O3', '-fno-automatic', '-fno-align-commons']
-
 requires = ['numpy', 'scipy', 'matplotlib']
 
 setup(
     name='pyhspf',
     version=_version,
-    description=_s,
+    description="Python Extensions for utilizing the Hydrological Simulation Program in Fortran (HSPF)",
     author='David Lampert',
     author_email='david.lampert@okstate.edu',
     url='https://github.com/djlampert/PyHSPF',
-    license=_l,
-    long_description=_d,
+    license="MIT",
+    long_description="PyHSPF is a library for hydrological simulations using the Hydrological Simulation Program in Fortran (HSPF).",
     keywords=['hydrology', 'watershed modeling', 'GIS'],
     platforms=['Windows', 'Linux'],
     classifiers=[
@@ -102,19 +67,9 @@ setup(
         'Intended Audience :: Science/Research',
     ],
     packages=['pyhspf', 'pyhspf.core', 'pyhspf.preprocessing', 'pyhspf.calibration', 'pyhspf.forecasting'],
-    package_dir={
-        'pyhspf': os.path.join(source_dir, 'pyhspf'),
-        'core': os.path.join(source_dir, 'pyhspf', 'core'),
-        'preprocessing': os.path.join(source_dir, 'pyhspf', 'preprocessing'),
-        'calibration': os.path.join(source_dir, 'pyhspf', 'calibration'),
-        'forecasting': os.path.join(source_dir, 'pyhspf', 'forecasting'),
-    },
-    package_data={'pyhspf': ['HSPF13.zip'], 'pyhspf.core': package_data},
-    data_files=[(data_directory, data_files)],
-    ext_modules=[Extension(
-        name='hspf',
-        sources=files,
-        extra_link_args=lflags,
-        extra_f77_compile_args=fflags
-    )]
+    package_dir={'pyhspf': 'src/pyhspf', 'core': 'src/pyhspf/core', 'preprocessing': 'src/pyhspf/preprocessing',
+                 'calibration': 'src/pyhspf/calibration', 'forecasting': 'src/pyhspf/forecasting'},
+    package_data={'pyhspf': ['HSPF13.zip'], 'pyhspf.core': ['hspfmsg.wdm', 'attributes']},
+    data_files=[('/usr/local/lib/python3.8/site-packages', ['src/pyhspf/hspfmsg.wdm'])],
+    ext_modules=[Extension(name='hspf', sources=files, extra_link_args=[], extra_f77_compile_args=fflags)]
 )
