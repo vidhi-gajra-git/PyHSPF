@@ -40,10 +40,10 @@ except:
     print('warning: preprocessing dependency "Pillow" is not installed')
 
 # Set up the correct path
-source_dir = os.path.join(os.getcwd(), 'src', 'pyhspf')  # This is the directory where your source code is located
+# source_dir = os.path.join(os.getcwd(), 'src', 'pyhspf')  # This is the directory where your source code is located
 
 # Ensure the correct directory and files are used
-files = [os.path.join(source_dir, 'hspf13', f) for f in os.listdir(os.path.join(source_dir, 'hspf13'))
+files = [os.path.join(os.getcwd(), 'hspf13', f) for f in os.listdir(os.path.join(os.getcwd(), 'hspf13'))
          if f.endswith('.c') or f.endswith('.f')]  # Look for .c and .f files
 
 fflags = ['-O3', '-fno-automatic', '-fno-align-commons']
