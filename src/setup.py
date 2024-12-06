@@ -143,7 +143,7 @@ package_data = ['hspfmsg.wdm', 'attributes']
 # find all the fortran and c files
 
 files = ['hspf13/{}'.format(f)
-         for f in os.listdir('./hspf13')
+         for f in os.listdir('/kaggle/working/PyHSPF/src')
          if f[-1] == 'c' or f[-1] == 'f']
 
 fflags = ['-O3', '-fno-automatic', '-fno-align-commons']
